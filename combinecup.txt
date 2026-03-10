@@ -1,0 +1,8 @@
+"combinecup"
+{
+	"base" "base"
+	"title" "Combine Cup"
+	"maps" "^cc_"
+	"category" "pvp"
+	"menusystem" "1"
+}
