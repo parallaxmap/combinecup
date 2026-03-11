@@ -4,6 +4,11 @@ function GM:PlayerSpawn(ply)
 
 	ply:Give("weapon_quake")
 
+	ply:SetNWInt("CurrentCheckpoint", ply:GetNWInt("CurrentCheckpoint", 0))
+	ply:SetNWInt("NextCheckpoint", ply:GetNWInt("NextCheckpoint", 1))
+
+	ply:SetNWInt("CurrentLap", ply:GetNWInt("CurrentLap", 1))
+
 	local spawnPos = ply:GetPos() + Vector(0, 0, 50)
 	local airboat = ents.Create("prop_vehicle_airboat")
 

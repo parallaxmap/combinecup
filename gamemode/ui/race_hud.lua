@@ -21,18 +21,18 @@ hook.Add("HUDPaint", "RaceHUD", function()
     local velocity = veh:GetVelocity():Length()
     local displayMPH = math.Round(velocity * 0.0568)
 
-    local targetBoost = ply:GetNWFloat("AirboatBoostAmount", 100)
+    local targetBoost = veh:GetNWFloat("AirboatBoostAmount", 100)
     local currentCheckpoint = ply:GetNWInt("Checkpoint", 0)
     smoothBoost = Lerp(FrameTime() * 10, smoothBoost, targetBoost)
     
     local boostRatio = math.Clamp(smoothBoost / 100, 0, 1)
-
-    -- CHECKPOINT DISPLAY (NOT FUNCTIONAL)
+    
+    -- CHECKPOINT DISPLAY 
     local cpX, cpY = 50, 30
     local cpW, cpH = 180, 40
 
     surface.SetFont("HudNumbers")
-    local cpNumText = currentCheckpoint .. "/10"
+    local cpNumText = ply:GetNWInt("CurrentCheckpoint", 0) + 1 .. "/" .. GetGlobalInt("TotalCheckpoints")
     local cpNumW, cpNumH = surface.GetTextSize(cpNumText)
 
     surface.SetFont("HudHintTextLarge")
@@ -45,12 +45,12 @@ hook.Add("HUDPaint", "RaceHUD", function()
     draw.SimpleText(cpNumText, "HudNumbersGlow", cpX + cpLabelW + 5, cpY + 3, Color(255, 215, 0))
     draw.SimpleText(cpNumText, "HudNumbers", cpX + cpLabelW + 5, cpY + 3, Color(255, 215, 0))
 
-    -- LAP DISPLAY (NOT FUNCTIONAL)
+    -- LAP DISPLAY
     local lpX, lpY = cpTotalW + 60, cpY
     local lpW, lpH = 180, 40
 
     surface.SetFont("HudNumbers")
-    local lpNumText = 1 .. "/3"
+    local lpNumText = ply:GetNWInt("CurrentLap", 1) .. "/" .. GetGlobalInt("LapCount")
     local lpNumW, lpNumH = surface.GetTextSize(lpNumText)
 
     surface.SetFont("HudHintTextLarge")
@@ -80,26 +80,29 @@ hook.Add("HUDPaint", "RaceHUD", function()
     draw.SimpleText(posNumText, "HudNumbersGlow", posX + posLabelW + 5, posY + 3, Color(255, 215, 0))
     draw.SimpleText(posNumText, "HudNumbers", posX + posLabelW + 5, posY + 3, Color(255, 215, 0))
 
-    -- BOOST BAR
-    local boostX, boostY = 50, ScrH() - 55
-    local boostW, boostH = 230, 20
+    local class = veh:GetClass()
+    if class == "prop_vehicle_airboat" then
+        -- BOOST BAR
+        local boostX, boostY = 50, ScrH() - 55
+        local boostW, boostH = 230, 20
 
-    draw.RoundedBox(4, boostX - 10, boostY, boostW, boostH, Color(0, 0, 0, 80))
-    draw.RoundedBox(2, boostX - 5, boostY + 5, (boostW - 10) * boostRatio, boostH - 10, Color(255, 215 * (targetBoost / 100), 0))
+        draw.RoundedBox(4, boostX - 10, boostY, boostW, boostH, Color(0, 0, 0, 80))
+        draw.RoundedBox(2, boostX - 5, boostY + 5, (boostW - 10) * boostRatio, boostH - 10, Color(255, 215 * (targetBoost / 100), 0))
 
-    -- SPEEDO
-    local speedX, speedY = boostX, boostY - 43
-    local speedW, speedH = 140, 45
+        -- SPEEDO
+        local speedX, speedY = boostX, boostY - 43
+        local speedW, speedH = 140, 45
 
-    surface.SetFont("HudNumbers")
-    local sNumW, sNumH = surface.GetTextSize(displayMPH)
+        surface.SetFont("HudNumbers")
+        local sNumW, sNumH = surface.GetTextSize(displayMPH)
 
-    local sTotalW = sNumW + 55
+        local sTotalW = sNumW + 55
 
-    draw.RoundedBox(6, speedX - 10, speedY - 10, sTotalW, speedH, Color(0, 0, 0, 80))
-    draw.SimpleText(displayMPH, "HudNumbersGlow", speedX + 2, speedY - 4, Color(255, 215, 0))
-    draw.SimpleText(displayMPH, "HudNumbers", speedX + 2, speedY - 4, Color(255, 215, 0))
-    draw.SimpleText("mph", "HudHintTextLarge", speedX + sNumW + 5, speedY + 11, Color(255, 215, 0))   
+        draw.RoundedBox(6, speedX - 10, speedY - 10, sTotalW, speedH, Color(0, 0, 0, 80))
+        draw.SimpleText(displayMPH, "HudNumbersGlow", speedX + 2, speedY - 4, Color(255, 215, 0))
+        draw.SimpleText(displayMPH, "HudNumbers", speedX + 2, speedY - 4, Color(255, 215, 0))
+        draw.SimpleText("mph", "HudHintTextLarge", speedX + sNumW + 5, speedY + 11, Color(255, 215, 0))   
+    end
 end)
 
 hook.Add("HUDPaint", "ShowRacerInfo", function()
