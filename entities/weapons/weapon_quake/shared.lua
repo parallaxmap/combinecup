@@ -17,6 +17,7 @@ function SWEP:PrimaryAttack()
 
     local radius = 300
     local force = 800
+    local damage = 100
     local pos = owner:GetPos()
 
     owner:EmitSound("ambient/explosions/exp2.wav", 100, 120)
@@ -25,6 +26,17 @@ function SWEP:PrimaryAttack()
 
     for _, ent in ipairs(targets) do
         if ent == owner or ent == owner:GetVehicle() then continue end
+
+        if ent:IsNPC() then
+            local d = DamageInfo()
+            d:SetDamage(damage)
+            d:SetAttacker(owner)
+            d:SetInflictor(self)
+            d:SetDamageType(DMG_BLAST)
+            d:SetDamagePosition(pos)
+            
+            ent:TakeDamageInfo(d)
+        end
 
         if ent:IsPlayer() or ent:GetMoveType() == MOVETYPE_VPHYSICS then
             

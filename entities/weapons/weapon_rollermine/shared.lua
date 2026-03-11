@@ -1,6 +1,6 @@
-SWEP.PrintName = "Heli Bomb"
+SWEP.PrintName = "Rollermine"
 SWEP.Base = "weapon_base"
-SWEP.Instructions = "Drop a helicopter bomb behind your vehicle!"
+SWEP.Instructions = "Drop a rollermine that latches onto other racers!"
 
 SWEP.Spawnable = true 
 SWEP.DrawAmmo = false
@@ -19,7 +19,7 @@ function SWEP:PrimaryAttack()
     
     local dropPos = veh:GetPos() + (veh:GetForward() * -100) + (veh:GetUp() * 20)
 
-    local bomb = ents.Create("grenade_helicopter")
+    local bomb = ents.Create("npc_rollermine")
     if not IsValid(bomb) then return end
 
     bomb:SetPos(dropPos)

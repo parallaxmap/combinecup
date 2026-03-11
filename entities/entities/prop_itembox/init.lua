@@ -23,7 +23,7 @@ function ENT:StartTouch(ent)
     end
 
     if IsValid(ply) and ply:IsPlayer() then
-        local items = {"weapon_turbo_topup", "weapon_quake", "weapon_helibomb"}
+        local items = {"weapon_turbo_topup", "weapon_quake", "weapon_helibomb", "weapon_rollermine"}
         local randomItem = table.Random(items)
         ply:Give(randomItem)
         ply:SelectWeapon(randomItem)
