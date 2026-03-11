@@ -5,6 +5,10 @@ SWEP.Instructions = "Replenish your vehicle's turbo!"
 SWEP.Spawnable = true 
 SWEP.DrawAmmo = false
 
+SWEP.Primary.Ammo = "none"
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = -1 
+
 function SWEP:PrimaryAttack()
     if CLIENT then return end
 
@@ -18,6 +22,8 @@ function SWEP:PrimaryAttack()
         veh.AirboatBoost = turboAdd
         veh:SetNWFloat("AirboatBoostAmount", turboAdd)
 
+        owner:EmitSound("player/suit_sprint.wav", 100, 100)
+
         self:Remove()
     end
 end
@@ -25,5 +31,6 @@ end
 function SWEP:SecondaryAttack()
     local owner = self:GetOwner()
     owner:SetHealth(math.Clamp(owner:Health() + 15, 0, 100))
+    owner:EmitSound("items/medshot4.wav", 75, 100)
     self:Remove()
 end

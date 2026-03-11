@@ -36,8 +36,8 @@ hook.Add("PlayerEnteredVehicle", "SetupAirboatDriver", function(ply, vehicle)
     if IsValid(vehicle) and vehicle:GetClass() == "prop_vehicle_airboat" then
         ply:SetAllowWeaponsInVehicle(true)
 
-        if not IsValid(ply.MyRacingBoat) then
-            ply.MyRacingBoat = veh
+        if not IsValid(ply.MyAirboat) then
+            ply.MyAirboat = veh
             veh.BoatOwner = ply 
         end
         

@@ -39,6 +39,8 @@ hook.Add("RacerCompletedLap", "HandleLapIncrement", function(ply)
 end)
 
 hook.Add("RacerFinishedRace", "AnnounceRacerFinish", function(ply)
+    player_manager.SetPlayerClass(ply, "player_spectator")
+
     PrintMessage(HUD_PRINTTALK, ply:Nick() .. " finished the race in pos #" .. ply:GetNWInt("RacePosition"))
 end)
 

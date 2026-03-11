@@ -3,6 +3,11 @@ SWEP.Base = "weapon_base"
 SWEP.Instructions = "Send out a shockwave to disrupt other racers!"
 
 SWEP.Spawnable = true 
+SWEP.DrawAmmo = false
+
+SWEP.Primary.Ammo = "none"
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = -1 
 
 function SWEP:PrimaryAttack()
     if CLIENT then return end
@@ -46,5 +51,6 @@ end
 function SWEP:SecondaryAttack()
     local owner = self:GetOwner()
     owner:SetHealth(math.Clamp(owner:Health() + 30, 0, 100))
+    owner:EmitSound("items/medshot4.wav", 75, 100)
     self:Remove()
 end

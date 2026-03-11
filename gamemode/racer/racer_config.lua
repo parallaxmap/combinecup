@@ -1,4 +1,8 @@
 function GM:PlayerSpawn(ply)
+	if player_manager.GetPlayerClass(ply) != "player_spectator" then
+        player_manager.SetPlayerClass(ply, "player_default")
+    end
+
 	ply:SetModel("models/player/group01/male_07.mdl")
 	ply:SetupHands()
 
@@ -11,6 +15,8 @@ function GM:PlayerSpawn(ply)
 end
 
 hook.Add("PlayerSpawn", "SpawnAtSpecificCheckpointEnt", function(ply)
+	
+
     timer.Simple(0, function()
         if not IsValid(ply) then return end
 
@@ -28,8 +34,8 @@ hook.Add("PlayerSpawn", "SpawnAtSpecificCheckpointEnt", function(ply)
             local pos = spawnPoint:GetPos()
             local ang = spawnPoint:GetAngles()
 
-            if IsValid(ply.MyRacingBoat) then
-                local veh = ply.MyRacingBoat
+            if IsValid(ply.MyAirboat) then
+                local veh = ply.MyAirboat
                 local phys = veh:GetPhysicsObject()
                 
                 if IsValid(phys) then
@@ -50,7 +56,7 @@ hook.Add("PlayerSpawn", "SpawnAtSpecificCheckpointEnt", function(ply)
                 veh:SetAngles(ang)
                 veh:Spawn()
                 
-                ply.MyRacingBoat = veh
+                ply.MyAirboat = veh
                 ply:EnterVehicle(veh)
             end
         end
