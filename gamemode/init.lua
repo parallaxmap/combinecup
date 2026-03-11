@@ -1,11 +1,11 @@
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
+AddCSLuaFile("ui/race_hud.lua")
+AddCSLuaFile("ui/bg_music.lua")
 
 include("shared.lua")
 include("racer/racer_config.lua")
 include("racer/airboat_config.lua")
-
-SetGlobalInt("TotalCheckpoints", 0)
 
 hook.Add("InitPostEntity", "CalculateMapCheckpoints", function()
     local allCheckpoints = ents.FindByClass("trigger_checkpoint")
@@ -39,10 +39,53 @@ hook.Add("RacerCompletedLap", "HandleLapIncrement", function(ply)
 end)
 
 hook.Add("RacerFinishedRace", "AnnounceRacerFinish", function(ply)
-    PrintMessage(HUD_PRINTTALK, ply:Nick() .. " finished the race!")
+    PrintMessage(HUD_PRINTTALK, ply:Nick() .. " finished the race in pos #" .. ply:GetNWInt("RacePosition"))
 end)
 
 hook.Add("RacerCrossedCheckpoint", "SetNextCheckpoint", function(ply, cpt)
 	ply:SetNWInt("CurrentCheckpoint", cpt.CheckpointID)
 	ply:SetNWInt("NextCheckpoint", cpt.NextCheckpointID)
+end)
+
+local lastUpdate = 0
+local checkpointPositions = {}
+
+local lastPositionUpdate = 0
+
+hook.Add("Think", "RacerPositionTracker", function()
+    if CurTime() < lastPositionUpdate + 0.05 then return end
+    lastPositionUpdate = CurTime()
+
+    local racers = player.GetAll()
+    local board = {}
+
+    for _, ply in ipairs(racers) do
+        local lap = ply:GetNWInt("CurrentLap", 1)
+        local checkpoint = ply:GetNWInt("CurrentCheckpoint", 0)
+        local nextCheckpointID = ply:GetNWInt("NextCheckpoint", 1)
+
+        local targetPos = nil
+        for _, ent in ipairs(ents.FindByClass("trigger_checkpoint")) do
+            if ent.CheckpointID == nextCheckpointID then
+                targetPos = ent:GetPos()
+                break
+            end
+        end
+
+        local distScore = 0
+        if targetPos then
+            local d = ply:GetPos():Distance(targetPos)
+            distScore = math.max(0, 20000 - d)
+        end
+
+        local totalScore = (lap * 1000000) + (checkpoint * 20000) + distScore
+        
+        table.insert(board, {p = ply, s = totalScore})
+    end
+
+    table.sort(board, function(a, b) return a.s > b.s end)
+
+    for rank, data in ipairs(board) do
+        data.p:SetNWInt("RacePosition", rank)
+    end
 end)

@@ -61,11 +61,12 @@ hook.Add("HUDPaint", "RaceHUD", function()
     draw.SimpleText(lpNumText, "HudNumbersGlow", lpX + lpLabelW + 5, lpY + 3, Color(255, 215, 0))
     draw.SimpleText(lpNumText, "HudNumbers", lpX + lpLabelW + 5, lpY + 3, Color(255, 215, 0))
 
-    -- POS DISPLAY (NOT FUNCTIONAL)
+    -- POS DISPLAY
     local posW, posH = 180, 40
 
     surface.SetFont("HudNumbers")
-    local posNumText = 3 .. "/6"
+    local posNumText = ply:GetNWInt("RacePosition", 1) .. "/" .. #player.GetAll()
+
     local posNumW, posNumH = surface.GetTextSize(posNumText)
 
     surface.SetFont("HudHintTextLarge")
