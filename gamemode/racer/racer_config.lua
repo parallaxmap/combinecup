@@ -2,7 +2,7 @@ function GM:PlayerSpawn(ply)
 	ply:SetModel("models/player/group01/male_07.mdl")
 	ply:SetupHands()
 
-	ply:Give("weapon_quake")
+	ply:Give("weapon_turbo_topup")
 
 	ply:SetNWInt("CurrentCheckpoint", ply:GetNWInt("CurrentCheckpoint", 0))
 	ply:SetNWInt("NextCheckpoint", ply:GetNWInt("NextCheckpoint", 1))

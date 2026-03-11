@@ -8,4 +8,11 @@ SWEP.Spawnable = true
 
 function SWEP:PrimaryAttack()
     print("quake")
+    self:Remove()
+end
+
+function SWEP:SecondaryAttack()
+    local owner = self:GetOwner()
+    owner:SetHealth(math.Clamp(owner:Health() + 30, 0, 100))
+    self:Remove()
 end
