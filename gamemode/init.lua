@@ -91,3 +91,12 @@ hook.Add("Think", "RacerPositionTracker", function()
         data.p:SetNWInt("RacePosition", rank)
     end
 end)
+
+local VOICE_DISTANCE = 1000
+
+-- no idea if this will actually work or not but lol
+
+hook.Add("PlayerCanHearPlayersVoice", "ProximityVoice", function(listener, talker)
+    local dist = listener:GetPos():Distance(talker:GetPos())
+    return (dist <= VOICE_DISTANCE), true
+end)
