@@ -8,7 +8,7 @@
 
 @PointClass = info_checkpoint_spawn : "Spawnpoint for associated checkpoint trigger"
 [
-	checkpoint_id(integer)	: "Checkpoint ID"	: 1	: "The ID of the trigger_checkpoint this spawnpoint should be associated to."
+	checkpoint_id(integer)	: "Checkpoint ID"	: 0	: "The ID of the trigger_checkpoint this spawnpoint should be associated to."
 ]
 
 @PointClass base(Targetname, Angles, Origin) studio("models/items/item_item_crate.mdl") = prop_itembox : "A floating crate that gives you an item when you touch it"
@@ -17,7 +17,7 @@
 
 @SolidClass base(Angles, Origin) = trigger_checkpoint : "A brush entity used to define the bounds of a checkpoint"
 [
-	checkpoint_id(integer)	: "Checkpoint ID"	: 1	: "The ID of this checkpoint."
-	next_checkpoint_id(integer)	: "Checkpoint ID"	: 2	: "The ID of the next checkpoint in line. The last checkpoint should point to the first checkpoint ID."
+	checkpoint_id(integer)	: "Checkpoint ID"	: 0	: "The ID of this checkpoint."
+	next_checkpoint_id(integer)	: "Next Checkpoint ID"	: 1	: "The ID of the next checkpoint in line. The last checkpoint should point to the first checkpoint ID."
 	lap_checkpoint(boolean)	: "Is Lap Checkpoint"	: 0	: "Determines if this checkpoint should increment the lap counter if crossed. Ideally should be set only for the first checkpoint"
 ]
