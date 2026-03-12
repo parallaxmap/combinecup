@@ -5,20 +5,13 @@ AddCSLuaFile("ui/bg_music.lua")
 AddCSLuaFile("player_class/player_combinecup_spectator.lua")
 
 include("shared.lua")
+include("sv_player.lua")
 include("racer/racer_config.lua")
 include("racer/airboat_config.lua")
 
 local CC_SPECTATOR_CLASS = "player_combinecup_spectator"
 local raceStartTime = 0
 local finishedCount = 0
-
-local function ResetRacerRunState(ply)
-    if not IsValid(ply) then return end
-    ply:SetNWBool("RaceFinished", false)
-    ply:SetNWBool("RaceDNF", false)
-    ply:SetNWInt("FinishPosition", 0)
-    ply:SetNWFloat("FinishTime", 0)
-end
 
 local function FormatRaceTime(t)
     if not t or t <= 0 then return "0:00.00" end
@@ -65,23 +58,10 @@ local function ApplySpectate(ply, target)
     end
 end
 
-local function RemovePlayerAirboat(ply)
-    if not IsValid(ply) then return end
-
-    if IsValid(ply.MyAirboat) then
-        local veh = ply.MyAirboat
-        if ply:GetVehicle() == veh then
-            ply:ExitVehicle()
-        end
-        veh:Remove()
-        ply.MyAirboat = nil
-    end
-end
-
 local function EnterSpectator(ply)
     if not IsValid(ply) then return end
 
-    RemovePlayerAirboat(ply)
+    ply:RemovePlayerAirboat()
     player_manager.SetPlayerClass(ply, CC_SPECTATOR_CLASS)
     ply:SetNWInt("CC_SpecMode", ply:GetNWInt("CC_SpecMode", OBS_MODE_CHASE))
     ply:KillSilent()
@@ -312,7 +292,7 @@ function SetGameState(newState)
         raceStartTime = 0
         finishedCount = 0
         for _, ply in ipairs(player.GetAll()) do
-            ResetRacerRunState(ply)
+            ply:ResetRacerRunState()
 
             if player_manager.GetPlayerClass(ply) == CC_SPECTATOR_CLASS then
                 ExitSpectator(ply) -- sets player_default + respawns
@@ -332,7 +312,7 @@ function SetGameState(newState)
         raceStartTime = CurTime()
         finishedCount = 0
         for _, ply in ipairs(player.GetAll()) do
-            ResetRacerRunState(ply)
+            ply:ResetRacerRunState()
         end
         StartGlobalRace() 
     elseif newState == STATE_RESULTS then
