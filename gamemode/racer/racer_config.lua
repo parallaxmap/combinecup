@@ -1,12 +1,10 @@
 function GM:PlayerSpawn(ply)
-	if player_manager.GetPlayerClass(ply) != "player_spectator" then
+	if player_manager.GetPlayerClass(ply) != "player_combinecup_spectator" then
         player_manager.SetPlayerClass(ply, "player_default")
     end
 
 	ply:SetModel("models/player/group01/male_07.mdl")
 	ply:SetupHands()
-
-	ply:Give("weapon_turbo_topup")
 
 	ply:SetNWInt("CurrentCheckpoint", ply:GetNWInt("CurrentCheckpoint", 0))
 	ply:SetNWInt("NextCheckpoint", ply:GetNWInt("NextCheckpoint", 1))
@@ -15,10 +13,10 @@ function GM:PlayerSpawn(ply)
 end
 
 hook.Add("PlayerSpawn", "SpawnAtSpecificCheckpointEnt", function(ply)
-	
 
     timer.Simple(0, function()
         if not IsValid(ply) then return end
+		if player_manager.GetPlayerClass(ply) == "player_combinecup_spectator" then return end
 
         local targetID = ply:GetNWInt("CurrentCheckpoint", 0)
         local spawnPoint = nil
