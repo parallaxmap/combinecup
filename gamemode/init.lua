@@ -321,6 +321,26 @@ function SetGameState(newState)
             net.WriteFloat(0)
         net.Broadcast()
 
+        timer.Simple(15, function()
+            local allMaps = file.Find("maps/*.bsp", "GAME")
+            local mapPool = {}
+
+            for _, mapName in ipairs(allMaps) do
+                local name = mapName:sub(1, -5):lower() 
+                if name:find("^cc_") then 
+                    table.insert(mapPool, name) 
+                end
+            end
+
+            local nextMap = table.Random(mapPool) or "gm_construct"
+            
+            PrintMessage(HUD_PRINTTALK, "Next map: " .. nextMap .. ". Changing in 3 seconds...")
+            
+            timer.Simple(3, function()
+                RunConsoleCommand("changelevel", nextMap)
+            end)
+        end)
+
         for _, ply in ipairs(player.GetAll()) do
             local isSpectator = (player_manager.GetPlayerClass(ply) == SPECTATOR_CLASS)
             if not ply:GetNWBool("RaceFinished", false) and not isSpectator then
