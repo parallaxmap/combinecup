@@ -7,16 +7,27 @@ function playermeta:SpawnAtSpecificCheckpointEnt()
         local targetID = self:GetNWInt("CurrentCheckpoint", 0)
         local spawnPoint = nil
 
-        for _, ent in ipairs(ents.FindByClass("info_checkpoint_spawn")) do
-            if ent.CheckpointID == targetID then
-                spawnPoint = ent
-                break
+        local classes = {"info_checkpoint_spawn", "trigger_checkpoint"}
+
+        for _, class in ipairs(classes) do
+            for _, ent in ipairs(ents.FindByClass(class)) do
+                if ent.CheckpointID == targetID then
+                    spawnPoint = ent
+                    print(ent)
+                    break
+                end
             end
+            if IsValid(spawnPoint) then break end
         end
 
         if IsValid(spawnPoint) then
-            local pos = spawnPoint:GetPos()
+            local pos = spawnPoint:GetClass() == "trigger_checkpoint" and spawnPoint:WorldSpaceCenter() or spawnPoint:GetPos()
             local ang = spawnPoint:GetAngles()
+
+            if spawnPoint:GetClass() == "trigger_checkpoint" then
+                pos = pos + Vector(0, 0, 10)
+            end
+            
 
             if IsValid(self.MyAirboat) then
                 local veh = self.MyAirboat
