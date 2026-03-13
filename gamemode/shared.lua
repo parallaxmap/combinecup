@@ -29,3 +29,5 @@ AIRBOAT_BOOST_FORCE = 250000
 
 function GM:Initialize()
 end
+
+RACE_DURATION = 180

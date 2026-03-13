@@ -23,7 +23,17 @@ function ENT:StartTouch(ent)
     end
 
     if IsValid(ply) and ply:IsPlayer() then
-        local items = {"weapon_turbo_topup", "weapon_quake", "weapon_helibomb", "weapon_rollermine"}
+        local lead_items = {"weapon_helibomb", "weapon_rollermine"}
+        local normal_items = {"weapon_turbo_topup", "weapon_quake", "weapon_helibomb", "weapon_rollermine"}
+        
+        local items = {}
+
+        if ply:GetNWInt("RacePosition") > 1 then
+            items = normal_items
+        else 
+            items = lead_items
+        end
+
         local randomItem = table.Random(items)
         ply:Give(randomItem)
         ply:SelectWeapon(randomItem)

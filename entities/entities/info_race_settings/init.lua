@@ -4,6 +4,7 @@ ENT.Base = "base_point"
 function ENT:KeyValue(key, value)
     if key == "lap_count" then
         SetGlobalInt("LapCount", tonumber(value))
-        print("map has " .. value .. " laps")
+    elseif key == "race_duration" then
+        RACE_DURATION = tonumber(value)
     end
 end

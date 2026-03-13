@@ -4,6 +4,7 @@
 @PointClass = info_race_settings : "Combine Cup race settings entity"
 [
 	lap_count(integer)	: "Lap Count"	: 3	: "How many laps the race should have."
+	race_duration(integer)	: "Race Duration (Secs)"	: 180	: "How long the race should last, in seconds."
 ]
 
 @PointClass = info_checkpoint_spawn : "Spawnpoint for associated checkpoint trigger"
