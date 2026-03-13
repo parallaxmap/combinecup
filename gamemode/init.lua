@@ -264,14 +264,42 @@ function StartRaceSequence()
     end)
 end
 
-concommand.Add("start_race", function(ply)
+concommand.Add("cc_start_race", function(ply)
     if not ply:IsSuperAdmin() then return end
     StartRaceSequence()
 end)
 
-concommand.Add("start_wait", function(ply)
+concommand.Add("cc_start_intermission", function(ply)
     if IsValid(ply) and not ply:IsSuperAdmin() then return end
     StartWaitingTimer()
+end)
+
+concommand.Add("cc_intermission_time", function(ply, cmd, args)
+    if IsValid(ply) and not ply:IsSuperAdmin() then return end
+    
+    local newTime = tonumber(args[1])
+    if not newTime then 
+        print(HUD_PRINTTALK, "usage: cc_intermission_time <seconds>")
+        return 
+    end
+
+    waitingDuration = newTime
+
+    print("set intermission duration to " .. newTime .. "s")
+end)
+
+concommand.Add("cc_min_players", function(ply, cmd, args)
+    if IsValid(ply) and not ply:IsSuperAdmin() then return end
+    
+    local newPlayers = tonumber(args[1])
+    if not newPlayers then 
+        print(HUD_PRINTTALK, "usage: cc_min_players <count>")
+        return 
+    end
+
+    minimumPlayers = newPlayers
+
+    print("set min players to " .. newPlayers)
 end)
 
 util.AddNetworkString("GameStateSync")
@@ -379,6 +407,7 @@ end)
 
 local waitingDuration = 30
 local waitingEndTime = 0
+local minimumPlayers = 2
 
 local function HumanCount()
     return #player.GetHumans()
@@ -396,7 +425,7 @@ function StartWaitingTimer()
     SetGameState(STATE_WAITING)
     timer.Remove("LobbyToRaceTimer")
 
-    if HumanCount() < 2 then
+    if HumanCount() < minimumPlayers then
         StopWaitingCountdown()
         return
     end

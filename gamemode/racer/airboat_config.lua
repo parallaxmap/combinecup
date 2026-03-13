@@ -22,6 +22,36 @@ hook.Add("Think", "AirboatBoost", function()
                     isBoosting = true
                 end
             end
+
+            if ply:KeyDown(IN_WALK) then
+                local veh = ply:GetVehicle()
+                local targets = ents.FindInSphere(veh:GetPos(), 100)
+
+                veh.NextZap = veh.NextZap or 0
+
+                for _, ent in ipairs(targets) do
+                    if ent == owner or ent == veh then continue end
+
+                    if ent:IsNPC() and veh.AirboatBoost >= 30 then
+                        if CurTime() < veh.NextZap then return end
+                        veh.NextZap = CurTime() + 5
+
+                        local effect = EffectData()
+                        effect:SetOrigin(ent:GetPos())
+                        effect:SetScale(1)
+                        effect:SetMagnitude(2)
+                        util.Effect("cball_explode", effect) -- High-quality electrical burst
+                        util.Effect("ElectricSpark", effect) -- Extra sparks
+
+                        ent:EmitSound("ambient/energy/zap1.wav", 75, 100)
+
+                        ent:Remove()
+
+                        veh.AirboatBoost = math.max(0, veh.AirboatBoost - 30)
+                        veh:SetNWFloat("AirboatBoostAmount", veh.AirboatBoost)
+                    end
+                end
+            end
         end
 
         if not isBoosting and veh.AirboatBoost < AIRBOAT_MAX_BOOST and not ply:KeyDown(IN_SPEED) then

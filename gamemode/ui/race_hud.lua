@@ -189,7 +189,21 @@ hook.Add("HUDPaint", "RaceHUD", function()
             draw.RoundedBox(6, speedX - 10, speedY - 10, sTotalW, speedH, Color(0, 0, 0, 80))
             draw.SimpleText(displayMPH, "HudNumbersGlow", speedX + 2, speedY - 4, Color(255, 215, 0))
             draw.SimpleText(displayMPH, "HudNumbers", speedX + 2, speedY - 4, Color(255, 215, 0))
-            draw.SimpleText("mph", "HudHintTextLarge", speedX + sNumW + 5, speedY + 11, Color(255, 215, 0))   
+            draw.SimpleText("mph", "HudHintTextLarge", speedX + sNumW + 5, speedY + 11, Color(255, 215, 0))  
+
+            -- BOOST AMNT
+            local boostNumX, boostNumY = sNumW + 115, boostY - 43
+            local boostNumW, boostNumH = 140, 45
+
+            surface.SetFont("HudNumbers")
+            local bNumW, bNumH = surface.GetTextSize(math.Round(veh:GetNWInt("AirboatBoostAmount")))
+
+            local bTotalW = bNumW + 76
+
+            draw.RoundedBox(6, boostNumX - 10, boostNumY - 10, bTotalW, boostNumH, Color(0, 0, 0, 80))
+            draw.SimpleText(math.Round(veh:GetNWInt("AirboatBoostAmount")), "HudNumbersGlow", boostNumX + 2, boostNumY - 4, Color(255, 215, 0))
+            draw.SimpleText(math.Round(veh:GetNWInt("AirboatBoostAmount")), "HudNumbers", boostNumX + 2, boostNumY - 4, Color(255, 215, 0))
+            draw.SimpleText("energy", "HudHintTextLarge", boostNumX + bNumW + 5, boostNumY + 11, Color(255, 215, 0))   
         end
     end
 end)
@@ -303,7 +317,7 @@ hook.Add("HUDPaint", "RaceCountdownHUD", function()
     end
 
     local scale = 1 + (countdownTime - CurTime())
-    local font = "DermaLarge" 
+    local font = "HudNumbers" 
     
     draw.SimpleTextOutlined(text, font, w/2, h/2, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, color_black)
 end)
