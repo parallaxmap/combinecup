@@ -25,7 +25,7 @@ hook.Add("Think", "AirboatBoost", function()
 
             if ply:KeyDown(IN_WALK) then
                 local veh = ply:GetVehicle()
-                local targets = ents.FindInSphere(veh:GetPos(), 100)
+                local targets = ents.FindInSphere(veh:GetPos(), 120)
 
                 veh.NextZap = veh.NextZap or 0
 
