@@ -2,14 +2,14 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("ui/race_hud.lua")
 AddCSLuaFile("ui/bg_music.lua")
-AddCSLuaFile("player_class/player_combinecup_spectator.lua")
+AddCSLuaFile("player_class/player_spectator.lua")
 
 include("shared.lua")
 include("sv_player.lua")
 include("racer/racer_config.lua")
 include("racer/airboat_config.lua")
 
-local CC_SPECTATOR_CLASS = "player_combinecup_spectator"
+local SPECTATOR_CLASS = "player_spectator"
 local raceStartTime = 0
 local finishedCount = 0
 
@@ -23,7 +23,7 @@ end
 local function GetSpectateTargets()
     local t = {}
     for _, ply in ipairs(player.GetAll()) do
-        if player_manager.GetPlayerClass(ply) == CC_SPECTATOR_CLASS then continue end
+        if player_manager.GetPlayerClass(ply) == SPECTATOR_CLASS then continue end
         if not ply:Alive() then continue end
         table.insert(t, ply)
     end
@@ -32,15 +32,15 @@ end
 
 local function ApplySpectate(ply, target)
     if not IsValid(ply) then return end
-    if player_manager.GetPlayerClass(ply) ~= CC_SPECTATOR_CLASS then return end
+    if player_manager.GetPlayerClass(ply) ~= SPECTATOR_CLASS then return end
 
     ply:StripWeapons()
     ply:ExitVehicle()
 
-    local mode = ply:GetNWInt("CC_SpecMode", OBS_MODE_CHASE)
+    local mode = ply:GetNWInt("SpecMode", OBS_MODE_CHASE)
     if mode ~= OBS_MODE_CHASE and mode ~= OBS_MODE_IN_EYE and mode ~= OBS_MODE_ROAMING then
         mode = OBS_MODE_CHASE
-        ply:SetNWInt("CC_SpecMode", mode)
+        ply:SetNWInt("SpecMode", mode)
     end
 
     local targets = GetSpectateTargets()
@@ -62,8 +62,8 @@ local function EnterSpectator(ply)
     if not IsValid(ply) then return end
 
     ply:RemovePlayerAirboat()
-    player_manager.SetPlayerClass(ply, CC_SPECTATOR_CLASS)
-    ply:SetNWInt("CC_SpecMode", ply:GetNWInt("CC_SpecMode", OBS_MODE_CHASE))
+    player_manager.SetPlayerClass(ply, SPECTATOR_CLASS)
+    ply:SetNWInt("SpecMode", ply:GetNWInt("SpecMode", OBS_MODE_CHASE))
     ply:KillSilent()
     ply:Spawn()
 
@@ -76,7 +76,7 @@ end
 
 local function ExitSpectator(ply)
     if not IsValid(ply) then return end
-    if player_manager.GetPlayerClass(ply) ~= CC_SPECTATOR_CLASS then return end
+    if player_manager.GetPlayerClass(ply) ~= SPECTATOR_CLASS then return end
 
     ply:UnSpectate()
     ply:Spectate(OBS_MODE_NONE)
@@ -163,7 +163,7 @@ hook.Add("Think", "RacerPositionTracker", function()
     local unfinished = {}
 
     for _, ply in ipairs(racers) do
-        local isSpectator = (player_manager.GetPlayerClass(ply) == CC_SPECTATOR_CLASS)
+        local isSpectator = (player_manager.GetPlayerClass(ply) == SPECTATOR_CLASS)
         local isFinished = ply:GetNWBool("RaceFinished", false)
 
         if isSpectator and not isFinished then
@@ -228,18 +228,17 @@ end)
 util.AddNetworkString("RaceTimerSync")
 util.AddNetworkString("RaceCountdown")
 
-local raceDuration = 180 
 local raceEndTime = 0
 
 function StartGlobalRace()
     timer.Remove("RaceEndTimer")
-    raceEndTime = CurTime() + raceDuration
+    raceEndTime = CurTime() + RACE_DURATION
 
     net.Start("RaceTimerSync")
         net.WriteFloat(raceEndTime)
     net.Broadcast()
 
-    timer.Create("RaceEndTimer", raceDuration, 1, function()
+    timer.Create("RaceEndTimer", RACE_DURATION, 1, function()
         SetGameState(STATE_RESULTS)
     end)
 end
@@ -294,7 +293,7 @@ function SetGameState(newState)
         for _, ply in ipairs(player.GetAll()) do
             ply:ResetRacerRunState()
 
-            if player_manager.GetPlayerClass(ply) == CC_SPECTATOR_CLASS then
+            if player_manager.GetPlayerClass(ply) == SPECTATOR_CLASS then
                 ExitSpectator(ply) -- sets player_default + respawns
             else
                 ply:UnSpectate()
@@ -323,7 +322,7 @@ function SetGameState(newState)
         net.Broadcast()
 
         for _, ply in ipairs(player.GetAll()) do
-            local isSpectator = (player_manager.GetPlayerClass(ply) == CC_SPECTATOR_CLASS)
+            local isSpectator = (player_manager.GetPlayerClass(ply) == SPECTATOR_CLASS)
             if not ply:GetNWBool("RaceFinished", false) and not isSpectator then
                 ply:SetNWBool("RaceDNF", true)
                 ply:SetNWFloat("FinishTime", 0)
@@ -412,7 +411,7 @@ hook.Add("Think", "CombineCup_WaitingCountdownGate", function()
     end
 end)
 
-hook.Add("PlayerDisconnected", "CombineCup_WaitingCountdownOnLeave", function()
+hook.Add("PlayerDisconnected", "WaitingCountdownOnLeave", function()
     if CurrentGameState ~= STATE_WAITING then return end
     if HumanCount() < 2 then
         StopWaitingCountdown()
@@ -441,9 +440,9 @@ hook.Add("PlayerInitialSpawn", "SyncTimerOnJoin", function(ply)
     end)
 end)
 
-hook.Add("PlayerButtonDown", "CombineCup_SpectatorControls", function(ply, button)
+hook.Add("PlayerButtonDown", "SpectatorControls", function(ply, button)
     if not IsValid(ply) then return end
-    if player_manager.GetPlayerClass(ply) ~= CC_SPECTATOR_CLASS then return end
+    if player_manager.GetPlayerClass(ply) ~= SPECTATOR_CLASS then return end
 
     if button == MOUSE_LEFT or button == MOUSE_RIGHT then
         local targets = GetSpectateTargets()
@@ -473,7 +472,7 @@ hook.Add("PlayerButtonDown", "CombineCup_SpectatorControls", function(ply, butto
 
     if button == KEY_SPACE then
         local order = {OBS_MODE_CHASE, OBS_MODE_IN_EYE, OBS_MODE_ROAMING}
-        local cur = ply:GetNWInt("CC_SpecMode", OBS_MODE_CHASE)
+        local cur = ply:GetNWInt("SpecMode", OBS_MODE_CHASE)
         local nextIdx = 1
         for i, m in ipairs(order) do
             if m == cur then
@@ -481,7 +480,7 @@ hook.Add("PlayerButtonDown", "CombineCup_SpectatorControls", function(ply, butto
                 break
             end
         end
-        ply:SetNWInt("CC_SpecMode", order[nextIdx])
+        ply:SetNWInt("SpecMode", order[nextIdx])
 
         local curTarget = ply:GetObserverTarget()
         if IsValid(curTarget) and curTarget:IsVehicle() then
@@ -492,24 +491,24 @@ hook.Add("PlayerButtonDown", "CombineCup_SpectatorControls", function(ply, butto
     end
 end)
 
-hook.Add("PlayerUse", "CombineCup_BlockSpectatorUse", function(ply, ent)
+hook.Add("PlayerUse", "BlockSpectatorUse", function(ply, ent)
     if not IsValid(ply) then return end
-    if player_manager.GetPlayerClass(ply) ~= CC_SPECTATOR_CLASS then return end
+    if player_manager.GetPlayerClass(ply) ~= SPECTATOR_CLASS then return end
 
     if IsValid(ent) and (ent:IsVehicle() or ent:GetClass() == "prop_vehicle_airboat") then
         return false
     end
 end)
 
-hook.Add("CanPlayerEnterVehicle", "CombineCup_BlockSpectatorEnterVehicle", function(ply, veh, role)
+hook.Add("CanPlayerEnterVehicle", "BlockSpectatorEnterVehicle", function(ply, veh, role)
     if not IsValid(ply) then return end
-    if player_manager.GetPlayerClass(ply) ~= CC_SPECTATOR_CLASS then return end
+    if player_manager.GetPlayerClass(ply) ~= SPECTATOR_CLASS then return end
     return false
 end)
 
-hook.Add("PlayerEnteredVehicle", "CombineCup_KickSpectatorOutOfVehicle", function(ply, veh, role)
+hook.Add("PlayerEnteredVehicle", "KickSpectatorOutOfVehicle", function(ply, veh, role)
     if not IsValid(ply) then return end
-    if player_manager.GetPlayerClass(ply) ~= CC_SPECTATOR_CLASS then return end
+    if player_manager.GetPlayerClass(ply) ~= SPECTATOR_CLASS then return end
 
     timer.Simple(0, function()
         if not IsValid(ply) then return end

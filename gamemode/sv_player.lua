@@ -2,7 +2,7 @@ local playermeta = FindMetaTable("Player")
 
 function playermeta:SpawnAtSpecificCheckpointEnt()
     timer.Simple(0, function()
-		if player_manager.GetPlayerClass(self) == "player_combinecup_spectator" then return end
+		if player_manager.GetPlayerClass(self) == "player_spectator" then return end
 
         local targetID = self:GetNWInt("CurrentCheckpoint", 0)
         local spawnPoint = nil

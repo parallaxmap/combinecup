@@ -1,6 +1,6 @@
 local PLAYER = {}
 
-PLAYER.DisplayName = "Combine Cup Spectator"
+PLAYER.DisplayName = "Spectator"
 PLAYER.WalkSpeed = 0
 PLAYER.RunSpeed = 0
 
@@ -18,5 +18,5 @@ function PLAYER:Spawn()
     end
 end
 
-player_manager.RegisterClass("player_combinecup_spectator", PLAYER, "player_default")
+player_manager.RegisterClass("player_spectator", PLAYER, "player_default")
 

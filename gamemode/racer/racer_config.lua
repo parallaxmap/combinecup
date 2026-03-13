@@ -1,5 +1,5 @@
 function GM:PlayerSpawn(ply)
-	if player_manager.GetPlayerClass(ply) != "player_combinecup_spectator" then
+	if player_manager.GetPlayerClass(ply) != "player_spectator" then
         player_manager.SetPlayerClass(ply, "player_default")
     end
 

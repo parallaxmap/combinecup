@@ -77,7 +77,7 @@ hook.Add("HUDPaint", "RaceHUD", function()
         end
     end
 
-    if player_manager.GetPlayerClass(ply) == "player_combinecup_spectator" then 
+    if player_manager.GetPlayerClass(ply) == "player_spectator" then 
         draw.SimpleText("SPECTATING", "DermaDefault", ScrW()/2, 50, color_white, TEXT_ALIGN_CENTER)
         return 
     else
@@ -196,7 +196,7 @@ end)
 
 hook.Add("HUDPaint", "ShowRacerInfo", function()
     local lp = LocalPlayer()
-    if not IsValid(lp) or player_manager.GetPlayerClass(lp) == "player_combinecup_spectator" then return end
+    if not IsValid(lp) or player_manager.GetPlayerClass(lp) == "player_spectator" then return end
 
     local myPos = lp:EyePos()
     local myVehicle = lp:GetVehicle()

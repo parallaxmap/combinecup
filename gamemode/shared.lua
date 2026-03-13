@@ -2,9 +2,9 @@ GM.Name = "Combine Cup"
 GM.Author = "scuttlerpod"
 
 if SERVER then
-    AddCSLuaFile("player_class/player_combinecup_spectator.lua")
+    AddCSLuaFile("player_class/player_spectator.lua")
 end
-include("player_class/player_combinecup_spectator.lua")
+include("player_class/player_spectator.lua")
 
 STATE_WAITING = 1  
 STATE_RACING  = 2  
