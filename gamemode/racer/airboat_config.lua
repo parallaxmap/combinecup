@@ -40,8 +40,8 @@ hook.Add("Think", "AirboatBoost", function()
                         effect:SetOrigin(ent:GetPos())
                         effect:SetScale(1)
                         effect:SetMagnitude(2)
-                        util.Effect("cball_explode", effect) -- High-quality electrical burst
-                        util.Effect("ElectricSpark", effect) -- Extra sparks
+                        util.Effect("cball_explode", effect)
+                        util.Effect("ElectricSpark", effect) 
 
                         ent:EmitSound("ambient/energy/zap1.wav", 75, 100)
 
